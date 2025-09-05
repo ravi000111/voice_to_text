@@ -33,14 +33,15 @@ return VALID JSON; omit keys that are unknown.
 }
 """
 
-LLM_BASE_URL = "http://localhost:8080/v1"           # LocalAI/Ollama endpoint
+         # LocalAI/Ollama endpoint
 LLM_MODEL    = "mistral-7b-instruct-v0.2-q4"
 WHISPER_SIZE = "small"                             # small / medium / large
 DEVICE       = "cpu"                               # or "cuda" if GPU present
 
 # ──────────────── INIT ────────────────
 whisper_model = WhisperModel(WHISPER_SIZE, device=DEVICE)
-llm_client    = OpenAI(base_url=LLM_BASE_URL, api_key="local-key")  # dummy key
+llm_client = OpenAI(base_url="http://localhost:8080/v1",
+                    api_key="local-key")
 
 # ──────────────── HELPERS ────────────────
 def transcribe_audio(raw: bytes) -> str:
