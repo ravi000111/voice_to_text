@@ -44,7 +44,7 @@ whisper_model = WhisperModel(WHISPER_SIZE, device=DEVICE)
 llm_client = openai.OpenAI(
     base_url="https://api.groq.com/openai/v1",
     model = "llama-3.1-8b-instant",
-    api_key="raafal"
+    api_key=os.environ.get("openai_api")
 )
 
 # ──────────────── HELPERS ────────────────
