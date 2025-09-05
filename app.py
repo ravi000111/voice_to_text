@@ -43,7 +43,7 @@ whisper_model = WhisperModel(WHISPER_SIZE, device=DEVICE)
 
 llm_client = openai.OpenAI(
     base_url="https://api.groq.com/openai/v1",
-    model_name = "llama-3.1-8b-instant",
+    
     api_key=os.environ.get("OPENAI_API")
 )
 
@@ -61,7 +61,7 @@ def transcribe_audio(raw: bytes) -> str:
 
 def extract_ftir(transcript: str) -> dict:
     rsp = llm_client.chat.completions.create(
-        model=LLM_MODEL,
+        model="llama-3.1-8b-instant",
         response_format={"type": "json_object"},
         messages=[
             {"role": "system", "content": PROMPT_TEXT},
