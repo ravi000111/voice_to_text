@@ -1,8 +1,8 @@
 # app.py  – Streamlit FTIR extractor (whisper + local LLM)
 import streamlit as st, subprocess, tempfile, json, os
 from faster_whisper import WhisperModel
-from openai import OpenAI   # ✔ works: LocalAI/Ollama expose OpenAI-style API
-
+import openai  # ✔ works: LocalAI/Ollama expose OpenAI-style API
+import os
 # ──────────────── CONFIG ────────────────
 PROMPT_TEXT = """
 You are an automotive QA assistant. Extract these FTIR parameters and
@@ -40,8 +40,12 @@ DEVICE       = "cpu"                               # or "cuda" if GPU present
 
 # ──────────────── INIT ────────────────
 whisper_model = WhisperModel(WHISPER_SIZE, device=DEVICE)
-llm_client = OpenAI(base_url="http://localhost:8080/v1",
-                    api_key="local-key")
+
+llm_client = openai.OpenAI(
+    base_url="https://api.groq.com/openai/v1",
+    model = "llama-3.1-8b-instant",
+    api_key="raafal"
+)
 
 # ──────────────── HELPERS ────────────────
 def transcribe_audio(raw: bytes) -> str:
