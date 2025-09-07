@@ -1,4 +1,0 @@
-﻿streamlit
-faster-whisper
-ffmpeg-python
-openai
