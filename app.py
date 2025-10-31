@@ -45,7 +45,7 @@ IMPORTANT: Include EVERY field in your JSON response, even if unknown.
 
 # ✅ Cloud-optimized settings
 WHISPER_SIZE = "small"  # Smaller model for cloud deployment
-DEVICE = "cpu"         # Force CPU for cloud
+DEVICE = "cpu"          # Force CPU for cloud
 
 # ──────────────── CLOUD-OPTIMIZED INIT ────────────────
 @st.cache_resource
@@ -57,7 +57,7 @@ def load_whisper_model():
                 WHISPER_SIZE, 
                 device=DEVICE,
                 compute_type="int8",  # Memory efficient
-                cpu_threads=2,       # Limited CPU resources
+                cpu_threads=2,        # Limited CPU resources
                 download_root="./models"  # Cache models locally
             )
         st.success(f"✅ Whisper-{WHISPER_SIZE} loaded successfully")
@@ -207,10 +207,7 @@ def create_empty_ftir_template() -> dict:
 st.set_page_config(page_title="FTIR Extractor", page_icon="🚗", layout="wide")
 st.title("🚗 FTIR Audio Extractor (Cloud Deployment)")
 
-# Cloud deployment info
 st.info("☁️ **Cloud Version**: Optimized for Streamlit Cloud with CPU processing")
-
-# File size warning
 st.warning("📁 **File Limits**: Max 25MB, recommended under 10MB for faster processing")
 
 audio = st.file_uploader(
@@ -227,9 +224,7 @@ if audio:
         st.error("❌ File too large! Please use a file smaller than 25MB.")
         st.stop()
     
-    # Processing with progress
     progress_container = st.container()
-    
     with progress_container:
         progress = st.progress(0)
         status = st.empty()
@@ -248,14 +243,26 @@ if audio:
             progress.progress(100)
             status.text("🎯 Processing complete!")
             
-            # Results
+            # ──────────────── NUDGE SECTION ────────────────
+            unknown_fields = [
+                key for key, value in ftir_data.items()
+                if value in ("Unknown", None, [], "")
+            ]
+
+            if unknown_fields:
+                st.warning(
+                    f"⚠️ Some fields are missing or uncertain: {', '.join(unknown_fields)}.\n"
+                    "Please verify these manually before final submission."
+                )
+            else:
+                st.success("✅ All FTIR fields successfully extracted!")
+
+            # ──────────────── RESULTS ────────────────
             st.subheader("📝 Transcript")
             with st.expander("View Transcript", expanded=False):
                 st.text_area("", transcript, height=200)
             
             st.subheader("📊 FTIR Parameters")
-            
-            # Organized display
             col1, col2 = st.columns(2)
             
             with col1:
@@ -278,7 +285,6 @@ if audio:
             st.markdown("**Complete FTIR JSON**")
             st.json(ftir_data)
             
-            # Download
             json_string = json.dumps(ftir_data, indent=2)
             st.download_button(
                 "📥 Download JSON",
@@ -290,6 +296,5 @@ if audio:
             progress.progress(100)
             status.text("❌ Transcription failed")
 
-# Footer
 st.markdown("---")
 st.caption(f"☁️ **Cloud Engine**: Whisper-{WHISPER_SIZE} on CPU • LLM: Groq API")
